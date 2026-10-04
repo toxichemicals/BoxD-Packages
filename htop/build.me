@@ -1,0 +1,25 @@
+exec=inline
+final=finaldir
+
+inscript{
+echo "==> Downloading htop source..."
+curl -L -O https://github.com/htop-dev/htop/releases/download/3.2.2/htop-3.2.2.tar.xz
+
+echo "==> Extracting tarball..."
+tar -xf htop-3.2.2.tar.xz
+cd htop-3.2.2
+
+echo "==> Configuring htop with multiarch paths..."
+export CPPFLAGS="-I/usr/include/x86_64-linux-gnu"
+export LDFLAGS="-L/usr/lib/x86_64-linux-gnu"
+./configure --prefix=/usr
+
+echo "==> Compiling source..."
+make -j$(nproc)
+
+echo "==> Staging files to finaldir..."
+mkdir -p ./finaldir
+make DESTDIR="./finaldir" install
+
+echo "==> Build staged successfully!"
+}
